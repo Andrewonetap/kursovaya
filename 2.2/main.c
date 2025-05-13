@@ -104,7 +104,7 @@ void update_tree_view_columns(AppData *data, gboolean is_level1_context, gboolea
     if (is_smoothing_alpha_table) {
         tree_view = data->level1_alpha_smoothing_view;
         store_ptr = &data->level1_alpha_smoothing_store;
-        current_table_data = data->table_data_main;
+        current_table_data = data->table_data_main; // Данные для сглаживания берутся из основной таблицы (точнее, из mu/alpha)
         context_str_debug = "L1_SM_ALPHA";
     } else if (is_smoothing_mu_table) {
         tree_view = data->level1_smoothing_view;
@@ -114,9 +114,9 @@ void update_tree_view_columns(AppData *data, gboolean is_level1_context, gboolea
     } else if (is_level1_context) {
         tree_view = data->level1_tree_view;
         store_ptr = &data->level1_store;
-        current_table_data = data->table_data_main;
+        current_table_data = data->table_data_main; // Основная таблица Уровня 1 отображает данные из table_data_main
         context_str_debug = "L1_MAIN";
-    } else {
+    } else { // Это MAIN_TABLE в главном окне
         tree_view = data->tree_view_main;
         store_ptr = &data->store_main;
         current_table_data = data->table_data_main;
@@ -143,26 +143,33 @@ void update_tree_view_columns(AppData *data, gboolean is_level1_context, gboolea
     }
 
     int model_column_count;
-    int data_col_count_local = (current_table_data ? current_table_data->column_count : 0);
+    // data_col_count_local используется для таблиц L1_MAIN и MAIN_TABLE, это кол-во колонок данных в table_data_main
+    int data_col_count_local = (current_table_data && (is_level1_context || (!is_smoothing_mu_table && !is_smoothing_alpha_table))) ? current_table_data->column_count : 0;
+
 
     if (is_smoothing_mu_table || is_smoothing_alpha_table) {
-        model_column_count = 6;
+        model_column_count = 6; // M, A=0.1, A=0.4, A=0.7, A=0.9, Real
     } else if (is_level1_context) {
+        // ID + X1..XN_data + mu + alpha
         model_column_count = 1 + data_col_count_local + 2;
-    } else {
+    } else { // MAIN_TABLE
+        // ID + X1..XN_data
         model_column_count = 1 + data_col_count_local;
     }
-     if (current_table_data == NULL && model_column_count > 1 &&
-         (is_level1_context || (!is_smoothing_mu_table && !is_smoothing_alpha_table)) )
-     {
-         debug_print("update_tree_view_columns (%s): current_table_data is NULL, сбрасываю model_column_count на 1\n", context_str_debug);
-         model_column_count = 1;
+
+    // Защита от current_table_data == NULL, если он нужен для расчета data_col_count_local
+     if (current_table_data == NULL && (is_level1_context || (!is_smoothing_mu_table && !is_smoothing_alpha_table))) {
+         debug_print("update_tree_view_columns (%s): current_table_data is NULL, сбрасываю data_col_count_local на 0, model_column_count будет 1 или 1+2 (для L1).\n", context_str_debug);
+         data_col_count_local = 0; // Пересчитаем model_column_count
+         if (is_level1_context) model_column_count = 1 + 0 + 2; // ID, mu, alpha
+         else model_column_count = 1 + 0; // Только ID
      }
 
+
     GType *types = g_new(GType, model_column_count);
-    types[0] = G_TYPE_INT;
+    types[0] = G_TYPE_INT; // ID или M - всегда int
     for (int i = 1; i < model_column_count; i++) {
-        types[i] = G_TYPE_DOUBLE;
+        types[i] = G_TYPE_DOUBLE; // Все остальные данные - double
     }
     *store_ptr = gtk_list_store_newv(model_column_count, types);
     g_free(types);
@@ -171,62 +178,78 @@ void update_tree_view_columns(AppData *data, gboolean is_level1_context, gboolea
     GtkCellRenderer *renderer;
     GtkTreeViewColumn *col;
 
+    // Колонка ID / M
     renderer = gtk_cell_renderer_text_new();
     g_object_set(renderer, "xalign", 0.5, NULL);
-    const char* id_col_title = "ID";
+    const char* id_col_title = "ID_ERR"; // Default
      if (is_smoothing_mu_table || is_smoothing_alpha_table) {
          id_col_title = "M";
      } else if (current_table_data && current_table_data->column_names && current_table_data->column_names[0]){
-         id_col_title = current_table_data->column_names[0];
-     } else if (!is_smoothing_mu_table && !is_smoothing_alpha_table) {
-         id_col_title = "Эпоха";
+         id_col_title = current_table_data->column_names[0]; // Имя первой колонки из БД
+     } else if (is_level1_context || (!is_smoothing_mu_table && !is_smoothing_alpha_table)) { // L1_MAIN или MAIN_TABLE без данных
+         id_col_title = "Эпоха"; // Запасной вариант
      }
-    col = gtk_tree_view_column_new_with_attributes(id_col_title, renderer, "text", 0, NULL);
+    col = gtk_tree_view_column_new_with_attributes(id_col_title, renderer, "text", 0, NULL); // Биндинг на 0-ю колонку модели
     gtk_tree_view_column_set_fixed_width(col, 60);
     gtk_tree_view_append_column(GTK_TREE_VIEW(tree_view), col);
-    debug_print("update_tree_view_columns (%s): Колонка ID '%s' (модель 0) добавлена.\n", context_str_debug, id_col_title);
+    debug_print("update_tree_view_columns (%s): Колонка ID/M '%s' (модель 0) добавлена.\n", context_str_debug, id_col_title);
 
+
+    // Настройка остальных колонок в зависимости от контекста
     if (is_smoothing_mu_table || is_smoothing_alpha_table) {
         debug_print("update_tree_view_columns (%s): Добавление колонок для таблиц сглаживания...\n", context_str_debug);
         const char *titles[] = {"A=0.1", "A=0.4", "A=0.7", "A=0.9", is_smoothing_alpha_table ? "α (реальн.)" : "μ (реальн.)"};
-        for (int i = 0; i < 5; i++) {
+        for (int i = 0; i < 5; i++) { // 5 колонок: 4 для A, 1 для реальных данных
             renderer = gtk_cell_renderer_text_new();
             g_object_set(renderer, "xalign", 0.5, NULL);
             col = gtk_tree_view_column_new();
             gtk_tree_view_column_set_title(col, titles[i]);
             gtk_tree_view_column_pack_start(col, renderer, TRUE);
+            // Индексы в модели: 1 (A=0.1), 2 (A=0.4), ..., 5 (реальные)
             gtk_tree_view_column_set_cell_data_func(col, renderer, cell_data_func, GINT_TO_POINTER(i + 1), NULL);
-            if (i == 4) {
-                g_object_set_data(G_OBJECT(col), is_smoothing_alpha_table ? "is-alpha" : "is-mu", GINT_TO_POINTER(1));
-                gtk_tree_view_column_set_fixed_width(col, 120);
-            } else {
-                gtk_tree_view_column_set_fixed_width(col, 80);
+
+            if (is_smoothing_alpha_table) {
+                // Для ВСЕХ колонок таблицы сглаживания альфа ставим флаг "is-alpha"
+                // чтобы cell_data_func использовала формат "%.2E"
+                g_object_set_data(G_OBJECT(col), "is-alpha", GINT_TO_POINTER(1));
+                if (i == 4) { // Колонка "α (реальн.)"
+                    gtk_tree_view_column_set_fixed_width(col, 120);
+                } else { // Колонки A=0.1, A=0.4, A=0.7, A=0.9 для альфа
+                    gtk_tree_view_column_set_fixed_width(col, 95); // Немного шире для E-формата
+                }
+            } else { // Это is_smoothing_mu_table
+                // Для таблицы сглаживания мю, только последняя колонка "μ (реальн.)" имеет специальный флаг.
+                // Остальные колонки (A=...) будут использовать формат по умолчанию из cell_data_func ("%.4f").
+                if (i == 4) { // Колонка "μ (реальн.)"
+                    g_object_set_data(G_OBJECT(col), "is-mu", GINT_TO_POINTER(1));
+                    gtk_tree_view_column_set_fixed_width(col, 120);
+                } else { // Колонки A=0.1, A=0.4, A=0.7, A=0.9 для мю
+                    gtk_tree_view_column_set_fixed_width(col, 80);
+                }
             }
             gtk_tree_view_append_column(GTK_TREE_VIEW(tree_view), col);
         }
-    } else if (is_level1_context) {
-        debug_print("update_tree_view_columns (%s): Добавление колонок для L1_MAIN...\n", context_str_debug);
+    } else if (is_level1_context) { // Таблица L1_MAIN (данные X, μ, α)
+        debug_print("update_tree_view_columns (%s): Добавление колонок для L1_MAIN (read-only data)...\n", context_str_debug);
         if (current_table_data && current_table_data->column_names) {
+            // Колонки данных X1, X2... (НЕредактируемые)
             for (int i = 0; i < data_col_count_local; i++) {
                 const char* col_title_data = (current_table_data->column_names[i + 1]) ? current_table_data->column_names[i + 1] : "ERR_COL";
-                gint model_col_idx = i + 1;
+                gint model_col_idx = i + 1; // Индекс в модели (начиная с 1)
                 renderer = gtk_cell_renderer_text_new();
                 g_object_set(renderer, "xalign", 0.5, NULL);
-                g_object_set(renderer, "editable", TRUE, NULL);
-                g_object_set_data(G_OBJECT(renderer), "tree-view-origin", "main");
-                g_object_set_data(G_OBJECT(renderer), "model-column-index", GINT_TO_POINTER(model_col_idx));
-                g_object_set_data_full(G_OBJECT(renderer), "db-column-name", g_strdup(col_title_data), (GDestroyNotify)g_free);
-                g_signal_connect(renderer, "edited", G_CALLBACK(on_cell_edited), data);
+                g_object_set(renderer, "editable", FALSE, NULL); // НЕ редактируемые для L1
+
                 col = gtk_tree_view_column_new();
                 gtk_tree_view_column_set_title(col, col_title_data);
                 gtk_tree_view_column_pack_start(col, renderer, TRUE);
-                gtk_tree_view_column_add_attribute(col, renderer, "text", model_col_idx);
                 gtk_tree_view_column_set_cell_data_func(col, renderer, cell_data_func, GINT_TO_POINTER(model_col_idx), NULL);
                 gtk_tree_view_column_set_fixed_width(col, 80);
                 gtk_tree_view_append_column(GTK_TREE_VIEW(tree_view), col);
             }
+            // Колонка μ
             int mu_model_idx = data_col_count_local + 1;
-            if (mu_model_idx < model_column_count) {
+            if (mu_model_idx < model_column_count) { // Проверка, что колонка помещается в модель
                  renderer = gtk_cell_renderer_text_new();
                  g_object_set(renderer, "xalign", 0.5, NULL);
                  col = gtk_tree_view_column_new();
@@ -237,8 +260,9 @@ void update_tree_view_columns(AppData *data, gboolean is_level1_context, gboolea
                  gtk_tree_view_column_set_fixed_width(col, 80);
                  gtk_tree_view_append_column(GTK_TREE_VIEW(tree_view), col);
             }
+            // Колонка α
             int alpha_model_idx = data_col_count_local + 2;
-            if (alpha_model_idx < model_column_count) {
+            if (alpha_model_idx < model_column_count) { // Проверка
                  renderer = gtk_cell_renderer_text_new();
                  g_object_set(renderer, "xalign", 0.5, NULL);
                  col = gtk_tree_view_column_new();
@@ -250,36 +274,44 @@ void update_tree_view_columns(AppData *data, gboolean is_level1_context, gboolea
                  gtk_tree_view_append_column(GTK_TREE_VIEW(tree_view), col);
             }
         }
-    } else { // MAIN_TABLE
-        debug_print("update_tree_view_columns (%s): Добавление колонок для MAIN_TABLE...\n", context_str_debug);
+    } else { // MAIN_TABLE (главная таблица в основном окне - редактируемые данные)
+        debug_print("update_tree_view_columns (%s): Добавление колонок для MAIN_TABLE (editable data)...\n", context_str_debug);
         if (current_table_data && current_table_data->column_names) {
             for (int i = 0; i < data_col_count_local; i++) {
                 const char* col_title_data = (current_table_data->column_names[i + 1]) ? current_table_data->column_names[i + 1] : "ERR_COL_NAME";
                 gint model_col_idx = i + 1;
-                if (model_col_idx >= model_column_count) { continue; }
+                if (model_col_idx >= model_column_count) {
+                    debug_print(" ! update_tree_view_columns (%s): model_col_idx %d >= model_column_count %d. Пропуск колонки '%s'\n",
+                                context_str_debug, model_col_idx, model_column_count, col_title_data);
+                    continue;
+                }
                 renderer = gtk_cell_renderer_text_new();
                 g_object_set(renderer, "xalign", 0.5, NULL);
-                g_object_set(renderer, "editable", TRUE, NULL);
-                g_object_set_data(G_OBJECT(renderer), "tree-view-origin", "main");
+                g_object_set(renderer, "editable", TRUE, NULL); // РЕДАКТИРУЕМЫЕ
+                // Установка данных для обработчика on_cell_edited
+                g_object_set_data(G_OBJECT(renderer), "tree-view-origin", "main"); // "main" - значит, вызывается из основного tree_view или l1_tree_view
                 g_object_set_data(G_OBJECT(renderer), "model-column-index", GINT_TO_POINTER(model_col_idx));
                 g_object_set_data_full(G_OBJECT(renderer), "db-column-name", g_strdup(col_title_data), (GDestroyNotify)g_free);
                 g_signal_connect(renderer, "edited", G_CALLBACK(on_cell_edited), data);
+
                 col = gtk_tree_view_column_new();
                 gtk_tree_view_column_set_title(col, col_title_data);
                 gtk_tree_view_column_pack_start(col, renderer, TRUE);
-                gtk_tree_view_column_add_attribute(col, renderer, "text", model_col_idx);
+                // gtk_tree_view_column_add_attribute(col, renderer, "text", model_col_idx); // Используем cell_data_func для форматирования
                 gtk_tree_view_column_set_cell_data_func(col, renderer, cell_data_func, GINT_TO_POINTER(model_col_idx), NULL);
                 gtk_tree_view_column_set_fixed_width(col, 80);
                 gtk_tree_view_append_column(GTK_TREE_VIEW(tree_view), col);
             }
         }
-    }
+    } // КОНЕЦ ВНЕШНЕГО IF/ELSE IF/ELSE ДЛЯ КОНТЕКСТОВ
 
+    // Установка модели в TreeView
     if (*store_ptr) {
         gtk_tree_view_set_model(GTK_TREE_VIEW(tree_view), GTK_TREE_MODEL(*store_ptr));
         debug_print("update_tree_view_columns (%s): Модель %p установлена для TreeView %p.\n", context_str_debug, (void*)*store_ptr, (void*)tree_view);
     } else {
-        gtk_tree_view_set_model(GTK_TREE_VIEW(tree_view), NULL);
+        gtk_tree_view_set_model(GTK_TREE_VIEW(tree_view), NULL); // На всякий случай, если store не создан
+        debug_print("update_tree_view_columns (%s): Store is NULL, модель не установлена для TreeView %p.\n", context_str_debug, (void*)tree_view);
     }
     debug_print("update_tree_view_columns (%s): Завершено.\n", context_str_debug);
 }
@@ -612,26 +644,148 @@ static void activate(GtkApplication *app, gpointer user_data) {
     gtk_window_set_title(GTK_WINDOW(window), "Анализ данных временных рядов");
     gtk_window_set_default_size(GTK_WINDOW(window), 1200, 800);
     data->parent = GTK_WINDOW(window);
-    data->main_box = gtk_box_new(GTK_ORIENTATION_VERTICAL, 5);
-    gtk_widget_set_margin_top(data->main_box,5); gtk_widget_set_margin_bottom(data->main_box,5); gtk_widget_set_margin_start(data->main_box,5); gtk_widget_set_margin_end(data->main_box,5);
-    gtk_window_set_child(GTK_WINDOW(window), data->main_box);
-    GtkWidget *button_box = gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 5); gtk_widget_set_halign(button_box, GTK_ALIGN_CENTER); gtk_box_append(GTK_BOX(data->main_box), button_box);
-    data->level1_button = gtk_button_new_with_label("Уровень 1"); gtk_widget_set_sensitive(data->level1_button, FALSE); g_signal_connect(data->level1_button, "clicked", G_CALLBACK(on_level_clicked), data); gtk_box_append(GTK_BOX(button_box), data->level1_button);
-    const char* levels[] = {"Уровень 2", "Уровень 3", "Уровень 4"};
-    for (int i=0; i < 3; ++i) { GtkWidget *level_button_other = gtk_button_new_with_label(levels[i]); gtk_widget_set_sensitive(level_button_other, FALSE); g_signal_connect(level_button_other, "clicked", G_CALLBACK(on_level_clicked), data); gtk_box_append(GTK_BOX(button_box), level_button_other); }
-    data->open_button = gtk_button_new_with_label("Открыть SQLite файл"); gtk_widget_set_halign(data->open_button, GTK_ALIGN_CENTER); gtk_widget_set_margin_top(data->open_button,5); gtk_widget_set_margin_bottom(data->open_button,5); gtk_box_append(GTK_BOX(data->main_box), data->open_button); g_signal_connect(data->open_button, "clicked", G_CALLBACK(open_sqlite_file), data);
-    GtkWidget *main_paned = gtk_paned_new(GTK_ORIENTATION_HORIZONTAL); gtk_widget_set_vexpand(main_paned, TRUE); gtk_widget_set_hexpand(main_paned, TRUE); gtk_paned_set_wide_handle(GTK_PANED(main_paned), TRUE); gtk_box_append(GTK_BOX(data->main_box), main_paned);
-    data->scrolled_window_main = gtk_scrolled_window_new(); gtk_scrolled_window_set_policy(GTK_SCROLLED_WINDOW(data->scrolled_window_main), GTK_POLICY_AUTOMATIC, GTK_POLICY_AUTOMATIC); data->tree_view_main = gtk_tree_view_new(); gtk_tree_view_set_headers_visible(GTK_TREE_VIEW(data->tree_view_main), TRUE); if (GTK_IS_WIDGET(data->tree_view_main)) g_object_set_data(G_OBJECT(data->tree_view_main), "app_data_ptr_for_debug", data); gtk_scrolled_window_set_child(GTK_SCROLLED_WINDOW(data->scrolled_window_main), data->tree_view_main); gtk_widget_set_visible(data->tree_view_main, FALSE); gtk_paned_set_start_child(GTK_PANED(main_paned), data->scrolled_window_main); gtk_paned_set_resize_start_child(GTK_PANED(main_paned), TRUE); gtk_widget_set_size_request(data->scrolled_window_main, 400, -1);
-    GtkWidget *right_panel_box = gtk_box_new(GTK_ORIENTATION_VERTICAL, 5); gtk_widget_set_margin_start(right_panel_box, 5); gtk_paned_set_end_child(GTK_PANED(main_paned), right_panel_box); gtk_paned_set_resize_end_child(GTK_PANED(main_paned), TRUE); gtk_widget_set_size_request(right_panel_box, 300, -1);
-    GtkWidget* label_values_table = gtk_label_new("Таблица 'Значения':"); gtk_widget_set_halign(label_values_table, GTK_ALIGN_START); gtk_box_append(GTK_BOX(right_panel_box), label_values_table);
-    data->scrolled_window_values = gtk_scrolled_window_new(); gtk_scrolled_window_set_policy(GTK_SCROLLED_WINDOW(data->scrolled_window_values), GTK_POLICY_AUTOMATIC, GTK_POLICY_NEVER); gtk_widget_set_size_request(data->scrolled_window_values, -1, 150); gtk_widget_set_vexpand(data->scrolled_window_values, FALSE); data->tree_view_values = gtk_tree_view_new(); if(GTK_IS_WIDGET(data->tree_view_values)) g_object_set_data(G_OBJECT(data->tree_view_values), "app_data_ptr_for_debug", data); gtk_tree_view_set_headers_visible(GTK_TREE_VIEW(data->tree_view_values), TRUE); gtk_widget_set_visible(data->tree_view_values, FALSE); gtk_scrolled_window_set_child(GTK_SCROLLED_WINDOW(data->scrolled_window_values), data->tree_view_values); gtk_box_append(GTK_BOX(right_panel_box), data->scrolled_window_values);
-    GtkWidget* label_schema_image = gtk_label_new("Схема:"); gtk_widget_set_halign(label_schema_image, GTK_ALIGN_START); gtk_widget_set_margin_top(label_schema_image,10); gtk_box_append(GTK_BOX(right_panel_box), label_schema_image);
-    data->picture_schema = gtk_picture_new(); gtk_picture_set_keep_aspect_ratio(GTK_PICTURE(data->picture_schema), TRUE); gtk_picture_set_can_shrink(GTK_PICTURE(data->picture_schema), TRUE); gtk_widget_set_visible(data->picture_schema, FALSE); GtkWidget* frame_picture = gtk_frame_new(NULL); gtk_widget_set_vexpand(frame_picture, TRUE); gtk_frame_set_child(GTK_FRAME(frame_picture), data->picture_schema); gtk_box_append(GTK_BOX(right_panel_box), frame_picture);
-    data->add_row_button = gtk_button_new_with_label("Добавить строку (в основную таблицу)"); gtk_widget_set_halign(data->add_row_button, GTK_ALIGN_CENTER); gtk_widget_set_margin_top(data->add_row_button,5); gtk_box_append(GTK_BOX(data->main_box), data->add_row_button); g_signal_connect(data->add_row_button, "clicked", G_CALLBACK(add_new_row), data); gtk_widget_set_sensitive(data->add_row_button, FALSE);
-    gtk_window_present(GTK_WINDOW(window));
-    gtk_paned_set_position(GTK_PANED(main_paned), gtk_widget_get_width(window) * 2 / 3);
-}
 
+    data->main_box = gtk_box_new(GTK_ORIENTATION_VERTICAL, 5);
+    gtk_widget_set_margin_top(data->main_box, 5);
+    gtk_widget_set_margin_bottom(data->main_box, 5);
+    gtk_widget_set_margin_start(data->main_box, 5);
+    gtk_widget_set_margin_end(data->main_box, 5);
+    gtk_window_set_child(GTK_WINDOW(window), data->main_box);
+
+    // Кнопки уровней
+    GtkWidget *button_box = gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 5);
+    gtk_widget_set_halign(button_box, GTK_ALIGN_CENTER);
+    gtk_box_append(GTK_BOX(data->main_box), button_box);
+
+    data->level1_button = gtk_button_new_with_label("Уровень 1");
+    gtk_widget_set_sensitive(data->level1_button, FALSE);
+    g_signal_connect(data->level1_button, "clicked", G_CALLBACK(on_level_clicked), data);
+    gtk_box_append(GTK_BOX(button_box), data->level1_button);
+
+    const char* levels[] = {"Уровень 2", "Уровень 3", "Уровень 4"};
+    for (int i = 0; i < 3; ++i) {
+        GtkWidget *level_button_other = gtk_button_new_with_label(levels[i]);
+        gtk_widget_set_sensitive(level_button_other, FALSE);
+        g_signal_connect(level_button_other, "clicked", G_CALLBACK(on_level_clicked), data);
+        gtk_box_append(GTK_BOX(button_box), level_button_other);
+    }
+
+    // Кнопка "Открыть SQLite файл"
+    data->open_button = gtk_button_new_with_label("Открыть SQLite файл");
+    gtk_widget_set_halign(data->open_button, GTK_ALIGN_CENTER);
+    gtk_widget_set_margin_top(data->open_button, 5);
+    gtk_widget_set_margin_bottom(data->open_button, 5);
+    gtk_box_append(GTK_BOX(data->main_box), data->open_button);
+    g_signal_connect(data->open_button, "clicked", G_CALLBACK(open_sqlite_file), data);
+
+    // --- GtkPaned для разделения на левую и правую части ---
+    GtkWidget *main_paned = gtk_paned_new(GTK_ORIENTATION_HORIZONTAL);
+    gtk_widget_set_vexpand(main_paned, TRUE);
+    gtk_widget_set_hexpand(main_paned, TRUE);
+    gtk_paned_set_wide_handle(GTK_PANED(main_paned), TRUE); // Широкий разделитель
+
+    // --- Левая панель (main_table) ---
+    data->scrolled_window_main = gtk_scrolled_window_new();
+    gtk_scrolled_window_set_policy(GTK_SCROLLED_WINDOW(data->scrolled_window_main), GTK_POLICY_AUTOMATIC, GTK_POLICY_AUTOMATIC);
+    data->tree_view_main = gtk_tree_view_new();
+    gtk_tree_view_set_headers_visible(GTK_TREE_VIEW(data->tree_view_main), TRUE);
+    if (GTK_IS_WIDGET(data->tree_view_main)) {
+        g_object_set_data(G_OBJECT(data->tree_view_main), "app_data_ptr_for_debug", data);
+    }
+    gtk_scrolled_window_set_child(GTK_SCROLLED_WINDOW(data->scrolled_window_main), data->tree_view_main);
+    gtk_widget_set_visible(data->tree_view_main, FALSE); // Изначально невидима
+
+    gtk_paned_set_start_child(GTK_PANED(main_paned), data->scrolled_window_main);
+    gtk_paned_set_resize_start_child(GTK_PANED(main_paned), TRUE); // Левая панель ДОЛЖНА изменять размер
+    // gtk_widget_set_size_request(data->scrolled_window_main, 400, -1); // Можно закомментировать или убрать
+
+
+    // --- Правая панель (values и schema) ---
+    GtkWidget *right_panel_box = gtk_box_new(GTK_ORIENTATION_VERTICAL, 5);
+    gtk_widget_set_margin_start(right_panel_box, 5);
+
+    GtkWidget* label_values_table = gtk_label_new("Таблица 'Значения':");
+    gtk_widget_set_halign(label_values_table, GTK_ALIGN_START);
+    gtk_box_append(GTK_BOX(right_panel_box), label_values_table);
+
+    data->scrolled_window_values = gtk_scrolled_window_new();
+    gtk_scrolled_window_set_policy(GTK_SCROLLED_WINDOW(data->scrolled_window_values), GTK_POLICY_AUTOMATIC, GTK_POLICY_NEVER);
+    gtk_widget_set_size_request(data->scrolled_window_values, -1, 150);
+    gtk_widget_set_vexpand(data->scrolled_window_values, FALSE);
+    data->tree_view_values = gtk_tree_view_new();
+    if (GTK_IS_WIDGET(data->tree_view_values)) {
+        g_object_set_data(G_OBJECT(data->tree_view_values), "app_data_ptr_for_debug", data);
+    }
+    gtk_tree_view_set_headers_visible(GTK_TREE_VIEW(data->tree_view_values), TRUE);
+    gtk_widget_set_visible(data->tree_view_values, FALSE);
+    gtk_scrolled_window_set_child(GTK_SCROLLED_WINDOW(data->scrolled_window_values), data->tree_view_values);
+    gtk_box_append(GTK_BOX(right_panel_box), data->scrolled_window_values);
+
+    GtkWidget* label_schema_image = gtk_label_new("Схема:");
+    gtk_widget_set_halign(label_schema_image, GTK_ALIGN_START);
+    gtk_widget_set_margin_top(label_schema_image, 10);
+    gtk_box_append(GTK_BOX(right_panel_box), label_schema_image);
+
+    data->picture_schema = gtk_picture_new();
+    gtk_picture_set_keep_aspect_ratio(GTK_PICTURE(data->picture_schema), TRUE);
+    gtk_picture_set_can_shrink(GTK_PICTURE(data->picture_schema), TRUE);
+    gtk_widget_set_visible(data->picture_schema, FALSE);
+    GtkWidget* frame_picture = gtk_frame_new(NULL);
+    gtk_widget_set_vexpand(frame_picture, TRUE);
+    gtk_frame_set_child(GTK_FRAME(frame_picture), data->picture_schema);
+    gtk_box_append(GTK_BOX(right_panel_box), frame_picture);
+
+    gtk_paned_set_end_child(GTK_PANED(main_paned), right_panel_box);
+    gtk_paned_set_resize_end_child(GTK_PANED(main_paned), FALSE); // Правая панель НЕ ДОЛЖНА изменять размер
+    gtk_widget_set_size_request(right_panel_box, 300, -1);      // Задаем ей желаемую ширину
+
+
+    gtk_box_append(GTK_BOX(data->main_box), main_paned); // Добавляем GtkPaned в главный vbox
+
+    // Кнопка "Добавить строку"
+    data->add_row_button = gtk_button_new_with_label("Добавить строку (в основную таблицу)");
+    gtk_widget_set_halign(data->add_row_button, GTK_ALIGN_CENTER);
+    gtk_widget_set_margin_top(data->add_row_button, 5);
+    gtk_box_append(GTK_BOX(data->main_box), data->add_row_button);
+    g_signal_connect(data->add_row_button, "clicked", G_CALLBACK(add_new_row), data);
+    gtk_widget_set_sensitive(data->add_row_button, FALSE);
+
+    // Показываем окно ПЕРЕД установкой позиции разделителя, чтобы get_width вернул актуальное значение
+    gtk_window_present(GTK_WINDOW(window));
+
+    // Устанавливаем позицию разделителя в GtkPaned
+    int window_width = gtk_widget_get_width(GTK_WIDGET(window));
+    int desired_right_panel_width = 300; // Желаемая ширина правой панели
+    // Ширина разделителя может быть разной, 10-12 для wide_handle - нормальное предположение
+    int paned_gutter_spacing = 12; 
+
+
+    int position_for_left_panel = window_width - desired_right_panel_width - paned_gutter_spacing;
+
+    // Минимальная ширина для левой панели (чтобы она не схлопнулась)
+    if (position_for_left_panel < 100) {
+        position_for_left_panel = 100;
+    }
+    // Убедимся, что правая панель не будет шире, чем desired_right_panel_width,
+    // если окно слишком узкое для position_for_left_panel + desired_right_panel_width
+    if (window_width - position_for_left_panel - paned_gutter_spacing < desired_right_panel_width) {
+       // Если так, пересчитаем, давая правой панели её минимум
+       if (window_width - desired_right_panel_width - paned_gutter_spacing > 100) { // Если для левой остается > 100
+            position_for_left_panel = window_width - desired_right_panel_width - paned_gutter_spacing;
+       } else if (window_width > desired_right_panel_width + paned_gutter_spacing + 100) { // если окно позволяет
+            position_for_left_panel = 100; // отдать левой мин, остальное пойдет правой (не идеально, но предотвратит отрицательную)
+       } else { // Окно очень узкое, пусть paned сам решает или одна панель будет очень узкой
+            position_for_left_panel = window_width / 2;
+       }
+    }
+    
+    // Окончательная проверка, чтобы позиция была в пределах
+    if (position_for_left_panel <= 0 ) position_for_left_panel = 50; // Защита от 0 или отрицательного
+    if (position_for_left_panel >= window_width - paned_gutter_spacing - 50 ) position_for_left_panel = window_width - paned_gutter_spacing - 50; // Защита
+
+
+    gtk_paned_set_position(GTK_PANED(main_paned), position_for_left_panel);
+}
 
 // --- Функция main ---
 int main(int argc, char **argv) {
