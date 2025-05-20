@@ -1084,27 +1084,16 @@ static void level1_perform_calculations_and_update_ui(AppData *data) {
             if (!data->conclusion_alpha_mu_store) { 
                 debug_print_l1("   Шаг 4.2: Начало создания GtkListStore для таблицы Заключения α(μ).\n");
                 
-                GType types_for_conclusion[4]; 
+                GType types_for_conclusion[5]; 
                 types_for_conclusion[0] = G_TYPE_STRING; // Источник
                 types_for_conclusion[1] = G_TYPE_INT;    // Эпоха
                 types_for_conclusion[2] = G_TYPE_DOUBLE; // mu
                 types_for_conclusion[3] = G_TYPE_DOUBLE; // alpha
+                types_for_conclusion[4] = G_TYPE_INVALID; // завершающий нуль
                 debug_print_l1("   Шаг 4.2.1: Массив GType types_for_conclusion инициализирован. ...\n");
 
-                debug_print_l1("   ПРОВЕРКА: Попытка создать ОЧЕНЬ простой store...\n");
-                GType simple_type[] = {G_TYPE_STRING};
-                GtkListStore *test_store = gtk_list_store_new(1, simple_type);
-                debug_print_l1("   ПРОВЕРКА: test_store создан: %p\n", (void*)test_store);
-                if (test_store) {
-                    g_object_unref(test_store); // Не забываем освободить, если создался
-                    debug_print_l1("   ПРОВЕРКА: test_store освобожден.\n");
-                } else {
-                    debug_print_l1("   ПРОВЕРКА: ОШИБКА создания test_store!\n");
-                }
-                debug_print_l1("   ПРОВЕРКА: Завершена.\n");
-
                 debug_print_l1("   Шаг 4.2.2: Вызов gtk_list_store_new(4, types_for_conclusion)...\n");
-                data->conclusion_alpha_mu_store = gtk_list_store_new(4, types_for_conclusion); 
+                data->conclusion_alpha_mu_store = gtk_list_store_newv(4, types_for_conclusion); // <- ВОТ ЛОМАНАЯ СТРОКА
                 debug_print_l1("   Шаг 4.2.3: gtk_list_store_new ВЫПОЛНЕН.\n");
             
                 debug_print_l1("   Шаг 4.3: data->conclusion_alpha_mu_store после создания: %p\n", (void*)data->conclusion_alpha_mu_store);
