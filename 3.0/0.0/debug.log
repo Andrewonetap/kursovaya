@@ -1,0 +1,256 @@
+﻿free_table_data_content_rl: Очистка TableData...
+free_table_data_content_rl: Очистка TableData завершена.
+free_table_data_content_rl: Очистка TableData...
+free_table_data_content_rl: Очистка TableData завершена.
+open_database_rl: База данных 'C:\Users\ioney\Downloads\kursovaya\white_list\0.0\Вариант28.sqlite' успешно открыта.
+load_table_rl: Начало загрузки таблицы 'Значения'
+free_table_data_content_rl: Очистка TableData...
+free_table_data_content_rl: Очистка TableData завершена.
+load_table_rl: Таблица 'Значения', PRAGMA 4 колонок. column_count (данных) = 4.
+load_table_rl SQL: SELECT ROWID, "A", "E", "Схема", "Количество" FROM "Значения" ORDER BY "ROWID";
+load_table_rl: Загрузка таблицы 'Значения' завершена. Строк: 1, Колонок данных: 4
+load_blob_by_rowid_rl: BLOB загружен, ROWID=1, размер: 74168 байт
+load_table_rl: Начало загрузки таблицы 'Данные'
+free_table_data_content_rl: Очистка TableData...
+free_table_data_content_rl: Очистка TableData завершена.
+load_table_rl: Таблица 'Данные', PRAGMA 25 колонок. column_count (данных) = 24.
+load_table_rl SQL: SELECT "Эпоха", "1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "11", "12", "13", "14", "15", "16", "17", "18", "19", "20", "21", "22", "23", "24" FROM "Данные" ORDER BY "Эпоха";
+load_table_rl: Загрузка таблицы 'Данные' завершена. Строк: 17, Колонок данных: 24
+free_table_data_content_rl: Очистка TableData...
+free_table_data_content_rl: Очистка TableData завершена.
+free_table_data_content_rl: Очистка TableData...
+free_table_data_content_rl: Очистка TableData завершена.
+open_database_rl: База данных 'C:\Users\ioney\Downloads\kursovaya\white_list\0.0\Вариант35.sqlite' успешно открыта.
+load_table_rl: Начало загрузки таблицы 'Значения'
+free_table_data_content_rl: Очистка TableData...
+free_table_data_content_rl: Очистка TableData завершена.
+load_table_rl: Таблица 'Значения', PRAGMA 4 колонок. column_count (данных) = 4.
+load_table_rl SQL: SELECT ROWID, "A", "E", "Схема", "Количество" FROM "Значения" ORDER BY "ROWID";
+load_table_rl: Загрузка таблицы 'Значения' завершена. Строк: 1, Колонок данных: 4
+load_blob_by_rowid_rl: BLOB загружен, ROWID=1, размер: 209280 байт
+load_table_rl: Начало загрузки таблицы 'Данные'
+free_table_data_content_rl: Очистка TableData...
+free_table_data_content_rl: Очистка TableData завершена.
+load_table_rl: Таблица 'Данные', PRAGMA 26 колонок. column_count (данных) = 25.
+load_table_rl SQL: SELECT "Эпоха", "1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "11", "12", "13", "14", "15", "16", "17", "18", "19", "20", "21", "22", "23", "24", "25" FROM "Данные" ORDER BY "Эпоха";
+load_table_rl: Загрузка таблицы 'Данные' завершена. Строк: 15, Колонок данных: 25
+free_table_data_content_rl: Очистка TableData...
+free_table_data_content_rl: Очистка TableData завершена.
+free_table_data_content_rl: Очистка TableData...
+free_table_data_content_rl: Очистка TableData завершена.
+free_table_data_content_rl: Очистка TableData...
+free_table_data_content_rl: Очистка TableData завершена.
+free_table_data_content_rl: Очистка TableData...
+free_table_data_content_rl: Очистка TableData завершена.
+open_database_rl: База данных 'C:\Users\ioney\Downloads\kursovaya\white_list\0.0\Вариант28.sqlite' успешно открыта.
+load_table_rl: Начало загрузки таблицы 'Значения'
+free_table_data_content_rl: Очистка TableData...
+free_table_data_content_rl: Очистка TableData завершена.
+load_table_rl: Таблица 'Значения', PRAGMA 4 колонок. column_count (данных) = 4.
+load_table_rl SQL: SELECT ROWID, "A", "E", "Схема", "Количество" FROM "Значения" ORDER BY "ROWID";
+load_table_rl: Загрузка таблицы 'Значения' завершена. Строк: 1, Колонок данных: 4
+load_blob_by_rowid_rl: BLOB загружен, ROWID=1, размер: 74168 байт
+load_table_rl: Начало загрузки таблицы 'Данные'
+free_table_data_content_rl: Очистка TableData...
+free_table_data_content_rl: Очистка TableData завершена.
+load_table_rl: Таблица 'Данные', PRAGMA 25 колонок. column_count (данных) = 24.
+load_table_rl SQL: SELECT "Эпоха", "1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "11", "12", "13", "14", "15", "16", "17", "18", "19", "20", "21", "22", "23", "24" FROM "Данные" ORDER BY "Эпоха";
+load_table_rl: Загрузка таблицы 'Данные' завершена. Строк: 17, Колонок данных: 24
+free_table_data_content_rl: Очистка TableData...
+free_table_data_content_rl: Очистка TableData завершена.
+free_table_data_content_rl: Очистка TableData...
+free_table_data_content_rl: Очистка TableData завершена.
+free_table_data_content_rl: Очистка TableData...
+free_table_data_content_rl: Очистка TableData завершена.
+free_table_data_content_rl: Очистка TableData...
+free_table_data_content_rl: Очистка TableData завершена.
+open_database_rl: База данных 'C:\Users\ioney\Downloads\kursovaya\white_list\0.0\Вариант28.sqlite' успешно открыта.
+load_table_rl: Начало загрузки таблицы 'Значения'
+free_table_data_content_rl: Очистка TableData...
+free_table_data_content_rl: Очистка TableData завершена.
+load_table_rl: Таблица 'Значения', PRAGMA 4 колонок. column_count (данных) = 4.
+load_table_rl SQL: SELECT ROWID, "A", "E", "Схема", "Количество" FROM "Значения" ORDER BY "ROWID";
+load_table_rl: Загрузка таблицы 'Значения' завершена. Строк: 1, Колонок данных: 4
+load_blob_by_rowid_rl: BLOB загружен, ROWID=1, размер: 74168 байт
+load_table_rl: Начало загрузки таблицы 'Данные'
+free_table_data_content_rl: Очистка TableData...
+free_table_data_content_rl: Очистка TableData завершена.
+load_table_rl: Таблица 'Данные', PRAGMA 25 колонок. column_count (данных) = 24.
+load_table_rl SQL: SELECT "Эпоха", "1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "11", "12", "13", "14", "15", "16", "17", "18", "19", "20", "21", "22", "23", "24" FROM "Данные" ORDER BY "Эпоха";
+load_table_rl: Загрузка таблицы 'Данные' завершена. Строк: 17, Колонок данных: 24
+free_table_data_content_rl: Очистка TableData...
+free_table_data_content_rl: Очистка TableData завершена.
+free_table_data_content_rl: Очистка TableData...
+free_table_data_content_rl: Очистка TableData завершена.
+free_table_data_content_rl: Очистка TableData...
+free_table_data_content_rl: Очистка TableData завершена.
+free_table_data_content_rl: Очистка TableData...
+free_table_data_content_rl: Очистка TableData завершена.
+free_table_data_content_rl: Очистка TableData...
+free_table_data_content_rl: Очистка TableData завершена.
+free_table_data_content_rl: Очистка TableData...
+free_table_data_content_rl: Очистка TableData завершена.
+open_database_rl: База данных 'C:\Users\ioney\Downloads\kursovaya\white_list\0.0\Вариант35.sqlite' успешно открыта.
+load_table_rl: Начало загрузки таблицы 'Значения'
+free_table_data_content_rl: Очистка TableData...
+free_table_data_content_rl: Очистка TableData завершена.
+load_table_rl: Таблица 'Значения', PRAGMA 4 колонок. column_count (данных) = 4.
+load_table_rl SQL: SELECT ROWID, "A", "E", "Схема", "Количество" FROM "Значения" ORDER BY "ROWID";
+load_table_rl: Загрузка таблицы 'Значения' завершена. Строк: 1, Колонок данных: 4
+load_blob_by_rowid_rl: BLOB загружен, ROWID=1, размер: 209280 байт
+load_table_rl: Начало загрузки таблицы 'Данные'
+free_table_data_content_rl: Очистка TableData...
+free_table_data_content_rl: Очистка TableData завершена.
+load_table_rl: Таблица 'Данные', PRAGMA 26 колонок. column_count (данных) = 25.
+load_table_rl SQL: SELECT "Эпоха", "1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "11", "12", "13", "14", "15", "16", "17", "18", "19", "20", "21", "22", "23", "24", "25" FROM "Данные" ORDER BY "Эпоха";
+load_table_rl: Загрузка таблицы 'Данные' завершена. Строк: 15, Колонок данных: 25
+free_table_data_content_rl: Очистка TableData...
+free_table_data_content_rl: Очистка TableData завершена.
+free_table_data_content_rl: Очистка TableData...
+free_table_data_content_rl: Очистка TableData завершена.
+free_table_data_content_rl: Очистка TableData...
+free_table_data_content_rl: Очистка TableData завершена.
+free_table_data_content_rl: Очистка TableData...
+free_table_data_content_rl: Очистка TableData завершена.
+open_database_rl: База данных 'C:\Users\ioney\Downloads\kursovaya\white_list\0.0\Вариант28.sqlite' успешно открыта.
+load_table_rl: Начало загрузки таблицы 'Значения'
+free_table_data_content_rl: Очистка TableData...
+free_table_data_content_rl: Очистка TableData завершена.
+load_table_rl: Таблица 'Значения', PRAGMA 4 колонок. column_count (данных) = 4.
+load_table_rl SQL: SELECT ROWID, "A", "E", "Схема", "Количество" FROM "Значения" ORDER BY "ROWID";
+load_table_rl: Загрузка таблицы 'Значения' завершена. Строк: 1, Колонок данных: 4
+load_blob_by_rowid_rl: BLOB загружен, ROWID=1, размер: 74168 байт
+load_table_rl: Начало загрузки таблицы 'Данные'
+free_table_data_content_rl: Очистка TableData...
+free_table_data_content_rl: Очистка TableData завершена.
+load_table_rl: Таблица 'Данные', PRAGMA 25 колонок. column_count (данных) = 24.
+load_table_rl SQL: SELECT "Эпоха", "1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "11", "12", "13", "14", "15", "16", "17", "18", "19", "20", "21", "22", "23", "24" FROM "Данные" ORDER BY "Эпоха";
+load_table_rl: Загрузка таблицы 'Данные' завершена. Строк: 17, Колонок данных: 24
+free_table_data_content_rl: Очистка TableData...
+free_table_data_content_rl: Очистка TableData завершена.
+free_table_data_content_rl: Очистка TableData...
+free_table_data_content_rl: Очистка TableData завершена.
+free_table_data_content_rl: Очистка TableData...
+free_table_data_content_rl: Очистка TableData завершена.
+free_table_data_content_rl: Очистка TableData...
+free_table_data_content_rl: Очистка TableData завершена.
+open_database_rl: База данных 'C:\Users\ioney\Downloads\kursovaya\white_list\0.0\Вариант28.sqlite' успешно открыта.
+load_table_rl: Начало загрузки таблицы 'Значения'
+free_table_data_content_rl: Очистка TableData...
+free_table_data_content_rl: Очистка TableData завершена.
+load_table_rl: Таблица 'Значения', PRAGMA 4 колонок. column_count (данных) = 4.
+load_table_rl SQL: SELECT ROWID, "A", "E", "Схема", "Количество" FROM "Значения" ORDER BY "ROWID";
+load_table_rl: Загрузка таблицы 'Значения' завершена. Строк: 1, Колонок данных: 4
+load_blob_by_rowid_rl: BLOB загружен, ROWID=1, размер: 74168 байт
+load_table_rl: Начало загрузки таблицы 'Данные'
+free_table_data_content_rl: Очистка TableData...
+free_table_data_content_rl: Очистка TableData завершена.
+load_table_rl: Таблица 'Данные', PRAGMA 25 колонок. column_count (данных) = 24.
+load_table_rl SQL: SELECT "Эпоха", "1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "11", "12", "13", "14", "15", "16", "17", "18", "19", "20", "21", "22", "23", "24" FROM "Данные" ORDER BY "Эпоха";
+load_table_rl: Загрузка таблицы 'Данные' завершена. Строк: 17, Колонок данных: 24
+update_table_cell_rl: Успешно обновлено 1 строк(а) в 'Данные', колонка '1', ID/ROWID=0, значение=0.0000
+update_table_cell_rl: Успешно обновлено 1 строк(а) в 'Данные', колонка '2', ID/ROWID=0, значение=35.2519
+update_table_cell_rl: Успешно обновлено 1 строк(а) в 'Данные', колонка '3', ID/ROWID=0, значение=35.4022
+update_table_cell_rl: Успешно обновлено 1 строк(а) в 'Данные', колонка '4', ID/ROWID=0, значение=35.5646
+update_table_cell_rl: Успешно обновлено 1 строк(а) в 'Данные', колонка '5', ID/ROWID=0, значение=35.7274
+update_table_cell_rl: Успешно обновлено 1 строк(а) в 'Данные', колонка '6', ID/ROWID=0, значение=35.9272
+update_table_cell_rl: Успешно обновлено 1 строк(а) в 'Данные', колонка '7', ID/ROWID=0, значение=35.0457
+update_table_cell_rl: Успешно обновлено 1 строк(а) в 'Данные', колонка '8', ID/ROWID=0, значение=35.8521
+update_table_cell_rl: Успешно обновлено 1 строк(а) в 'Данные', колонка '9', ID/ROWID=0, значение=35.7849
+update_table_cell_rl: Успешно обновлено 1 строк(а) в 'Данные', колонка '10', ID/ROWID=0, значение=35.0833
+update_table_cell_rl: Успешно обновлено 1 строк(а) в 'Данные', колонка '11', ID/ROWID=0, значение=35.2205
+update_table_cell_rl: Успешно обновлено 1 строк(а) в 'Данные', колонка '12', ID/ROWID=0, значение=35.3011
+update_table_cell_rl: Успешно обновлено 1 строк(а) в 'Данные', колонка '13', ID/ROWID=0, значение=35.3420
+update_table_cell_rl: Успешно обновлено 1 строк(а) в 'Данные', колонка '14', ID/ROWID=0, значение=35.3491
+update_table_cell_rl: Успешно обновлено 1 строк(а) в 'Данные', колонка '15', ID/ROWID=0, значение=35.3660
+update_table_cell_rl: Успешно обновлено 1 строк(а) в 'Данные', колонка '16', ID/ROWID=0, значение=35.3611
+update_table_cell_rl: Успешно обновлено 1 строк(а) в 'Данные', колонка '17', ID/ROWID=0, значение=35.3584
+update_table_cell_rl: Успешно обновлено 1 строк(а) в 'Данные', колонка '18', ID/ROWID=0, значение=35.3581
+update_table_cell_rl: Успешно обновлено 1 строк(а) в 'Данные', колонка '19', ID/ROWID=0, значение=35.3571
+update_table_cell_rl: Успешно обновлено 1 строк(а) в 'Данные', колонка '20', ID/ROWID=0, значение=35.3572
+update_table_cell_rl: Успешно обновлено 1 строк(а) в 'Данные', колонка '21', ID/ROWID=0, значение=35.3575
+update_table_cell_rl: Успешно обновлено 1 строк(а) в 'Данные', колонка '22', ID/ROWID=0, значение=35.3574
+update_table_cell_rl: Успешно обновлено 1 строк(а) в 'Данные', колонка '23', ID/ROWID=0, значение=35.3574
+update_table_cell_rl: Успешно обновлено 1 строк(а) в 'Данные', колонка '24', ID/ROWID=0, значение=35.3574
+free_table_data_content_rl: Очистка TableData...
+free_table_data_content_rl: Очистка TableData завершена.
+free_table_data_content_rl: Очистка TableData...
+free_table_data_content_rl: Очистка TableData завершена.
+open_database_rl: База данных 'C:\Users\ioney\Downloads\kursovaya\white_list\0.0\Вариант35.sqlite' успешно открыта.
+load_table_rl: Начало загрузки таблицы 'Значения'
+free_table_data_content_rl: Очистка TableData...
+free_table_data_content_rl: Очистка TableData завершена.
+load_table_rl: Таблица 'Значения', PRAGMA 4 колонок. column_count (данных) = 4.
+load_table_rl SQL: SELECT ROWID, "A", "E", "Схема", "Количество" FROM "Значения" ORDER BY "ROWID";
+load_table_rl: Загрузка таблицы 'Значения' завершена. Строк: 1, Колонок данных: 4
+load_blob_by_rowid_rl: BLOB загружен, ROWID=1, размер: 209280 байт
+load_table_rl: Начало загрузки таблицы 'Данные'
+free_table_data_content_rl: Очистка TableData...
+free_table_data_content_rl: Очистка TableData завершена.
+load_table_rl: Таблица 'Данные', PRAGMA 26 колонок. column_count (данных) = 25.
+load_table_rl SQL: SELECT "Эпоха", "1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "11", "12", "13", "14", "15", "16", "17", "18", "19", "20", "21", "22", "23", "24", "25" FROM "Данные" ORDER BY "Эпоха";
+load_table_rl: Загрузка таблицы 'Данные' завершена. Строк: 15, Колонок данных: 25
+free_table_data_content_rl: Очистка TableData...
+free_table_data_content_rl: Очистка TableData завершена.
+free_table_data_content_rl: Очистка TableData...
+free_table_data_content_rl: Очистка TableData завершена.
+open_database_rl: База данных 'C:\Users\ioney\Downloads\kursovaya\white_list\0.0\Вариант28.sqlite' успешно открыта.
+load_table_rl: Начало загрузки таблицы 'Значения'
+free_table_data_content_rl: Очистка TableData...
+free_table_data_content_rl: Очистка TableData завершена.
+load_table_rl: Таблица 'Значения', PRAGMA 4 колонок. column_count (данных) = 4.
+load_table_rl SQL: SELECT ROWID, "A", "E", "Схема", "Количество" FROM "Значения" ORDER BY "ROWID";
+load_table_rl: Загрузка таблицы 'Значения' завершена. Строк: 1, Колонок данных: 4
+load_blob_by_rowid_rl: BLOB загружен, ROWID=1, размер: 74168 байт
+load_table_rl: Начало загрузки таблицы 'Данные'
+free_table_data_content_rl: Очистка TableData...
+free_table_data_content_rl: Очистка TableData завершена.
+load_table_rl: Таблица 'Данные', PRAGMA 25 колонок. column_count (данных) = 24.
+load_table_rl SQL: SELECT "Эпоха", "1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "11", "12", "13", "14", "15", "16", "17", "18", "19", "20", "21", "22", "23", "24" FROM "Данные" ORDER BY "Эпоха";
+load_table_rl: Загрузка таблицы 'Данные' завершена. Строк: 17, Колонок данных: 24
+update_table_cell_rl: Успешно обновлено 1 строк(а) в 'Данные', колонка '1', ID/ROWID=0, значение=35.8133
+update_table_cell_rl: Успешно обновлено 1 строк(а) в 'Данные', колонка '2', ID/ROWID=0, значение=35.2519
+update_table_cell_rl: Успешно обновлено 1 строк(а) в 'Данные', колонка '3', ID/ROWID=0, значение=35.4022
+update_table_cell_rl: Успешно обновлено 1 строк(а) в 'Данные', колонка '4', ID/ROWID=0, значение=35.5646
+update_table_cell_rl: Успешно обновлено 1 строк(а) в 'Данные', колонка '5', ID/ROWID=0, значение=35.7274
+update_table_cell_rl: Успешно обновлено 1 строк(а) в 'Данные', колонка '6', ID/ROWID=0, значение=35.9272
+update_table_cell_rl: Успешно обновлено 1 строк(а) в 'Данные', колонка '7', ID/ROWID=0, значение=35.0457
+update_table_cell_rl: Успешно обновлено 1 строк(а) в 'Данные', колонка '8', ID/ROWID=0, значение=35.8521
+update_table_cell_rl: Успешно обновлено 1 строк(а) в 'Данные', колонка '9', ID/ROWID=0, значение=35.7849
+update_table_cell_rl: Успешно обновлено 1 строк(а) в 'Данные', колонка '10', ID/ROWID=0, значение=35.0833
+update_table_cell_rl: Успешно обновлено 1 строк(а) в 'Данные', колонка '11', ID/ROWID=0, значение=35.2205
+update_table_cell_rl: Успешно обновлено 1 строк(а) в 'Данные', колонка '12', ID/ROWID=0, значение=35.3011
+update_table_cell_rl: Успешно обновлено 1 строк(а) в 'Данные', колонка '13', ID/ROWID=0, значение=35.3420
+update_table_cell_rl: Успешно обновлено 1 строк(а) в 'Данные', колонка '14', ID/ROWID=0, значение=35.3491
+update_table_cell_rl: Успешно обновлено 1 строк(а) в 'Данные', колонка '15', ID/ROWID=0, значение=35.3660
+update_table_cell_rl: Успешно обновлено 1 строк(а) в 'Данные', колонка '16', ID/ROWID=0, значение=35.3611
+update_table_cell_rl: Успешно обновлено 1 строк(а) в 'Данные', колонка '17', ID/ROWID=0, значение=35.3584
+update_table_cell_rl: Успешно обновлено 1 строк(а) в 'Данные', колонка '18', ID/ROWID=0, значение=35.3581
+update_table_cell_rl: Успешно обновлено 1 строк(а) в 'Данные', колонка '19', ID/ROWID=0, значение=35.3571
+update_table_cell_rl: Успешно обновлено 1 строк(а) в 'Данные', колонка '20', ID/ROWID=0, значение=35.3572
+update_table_cell_rl: Успешно обновлено 1 строк(а) в 'Данные', колонка '21', ID/ROWID=0, значение=35.3575
+update_table_cell_rl: Успешно обновлено 1 строк(а) в 'Данные', колонка '22', ID/ROWID=0, значение=35.3574
+update_table_cell_rl: Успешно обновлено 1 строк(а) в 'Данные', колонка '23', ID/ROWID=0, значение=35.3574
+update_table_cell_rl: Успешно обновлено 1 строк(а) в 'Данные', колонка '24', ID/ROWID=0, значение=35.3574
+free_table_data_content_rl: Очистка TableData...
+free_table_data_content_rl: Очистка TableData завершена.
+free_table_data_content_rl: Очистка TableData...
+free_table_data_content_rl: Очистка TableData завершена.
+free_table_data_content_rl: Очистка TableData...
+free_table_data_content_rl: Очистка TableData завершена.
+free_table_data_content_rl: Очистка TableData...
+free_table_data_content_rl: Очистка TableData завершена.
+open_database_rl: База данных 'C:\Users\ioney\Downloads\kursovaya\white_list\0.0\Вариант28.sqlite' успешно открыта.
+load_table_rl: Начало загрузки таблицы 'Значения'
+free_table_data_content_rl: Очистка TableData...
+free_table_data_content_rl: Очистка TableData завершена.
+load_table_rl: Таблица 'Значения', PRAGMA 4 колонок. column_count (данных) = 4.
+load_table_rl SQL: SELECT ROWID, "A", "E", "Схема", "Количество" FROM "Значения" ORDER BY "ROWID";
+load_table_rl: Загрузка таблицы 'Значения' завершена. Строк: 1, Колонок данных: 4
+load_blob_by_rowid_rl: BLOB загружен, ROWID=1, размер: 74168 байт
+load_table_rl: Начало загрузки таблицы 'Данные'
+free_table_data_content_rl: Очистка TableData...
+free_table_data_content_rl: Очистка TableData завершена.
+load_table_rl: Таблица 'Данные', PRAGMA 25 колонок. column_count (данных) = 24.
+load_table_rl SQL: SELECT "Эпоха", "1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "11", "12", "13", "14", "15", "16", "17", "18", "19", "20", "21", "22", "23", "24" FROM "Данные" ORDER BY "Эпоха";
+load_table_rl: Загрузка таблицы 'Данные' завершена. Строк: 17, Колонок данных: 24
