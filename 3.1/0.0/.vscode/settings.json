@@ -1,0 +1,9 @@
+{
+    "files.associations": {
+        "app_data_rl.h": "c",
+        "sqlite_utils_rl.h": "c",
+        "calculations_rl.h": "c",
+        "raygui.h": "c",
+        "level1_analysis_rl.h": "c"
+    }
+}

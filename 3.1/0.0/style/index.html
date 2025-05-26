@@ -1,0 +1,466 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Редизайн: Анализ данных (Верхняя панель)</title>
+    <style>
+        :root {
+            --font-family: 'Segoe UI', 'Roboto', 'Helvetica Neue', Arial, sans-serif;
+            /* Светлая тема */
+            --bg-primary: #ffffff;
+            --bg-secondary: #f4f6f8;
+            --bg-tertiary: #e9ecef; /* Для фона меню, тулбара */
+            --bg-hover: #dce0e4; /* Для наведения на кнопки/меню */
+            --text-primary: #212529;
+            --text-secondary: #495057;
+            --text-muted: #6c757d;
+            --border-color: #ced4da; /* Более явный бордер для панелей */
+            --accent-primary: #007bff;
+            --accent-primary-hover: #0056b3;
+            --dropdown-bg: #ffffff;
+            --dropdown-border: #cccccc;
+            --dropdown-shadow: rgba(0, 0, 0, 0.15);
+            --scrollbar-thumb: #c1c1c1;
+            --scrollbar-track: #e9ecef;
+            --input-bg: #ffffff;
+            --input-border: #ced4da;
+            --shadow-color: rgba(0, 0, 0, 0.1);
+        }
+
+        body.dark-theme {
+            --bg-primary: #1e1e1e;
+            --bg-secondary: #252526;
+            --bg-tertiary: #2c2c2e;
+            --bg-hover: #3a3a3c;
+            --text-primary: #d4d4d4;
+            --text-secondary: #a0a0a0;
+            --text-muted: #707070;
+            --border-color: #454545;
+            --accent-primary: #007acc;
+            --accent-primary-hover: #005fab;
+            --dropdown-bg: #2c2c2e;
+            --dropdown-border: #505050;
+            --dropdown-shadow: rgba(0, 0, 0, 0.3);
+            --scrollbar-thumb: #555;
+            --scrollbar-track: #333;
+            --input-bg: #333333;
+            --input-border: #555555;
+            --shadow-color: rgba(0, 0, 0, 0.3);
+        }
+
+        body {
+            font-family: var(--font-family);
+            background-color: var(--bg-secondary);
+            color: var(--text-primary);
+            margin: 0;
+            display: flex;
+            flex-direction: column;
+            height: 100vh;
+            overflow: hidden;
+            transition: background-color 0.3s, color 0.3s;
+        }
+
+        .app-container { display: flex; flex-direction: column; height: 100%; }
+
+        .app-title-bar {
+            background-color: var(--bg-tertiary);
+            color: var(--text-primary);
+            padding: 5px 15px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid var(--border-color);
+            height: 30px;
+            flex-shrink: 0;
+            font-size: 0.9em;
+        }
+        .app-title-bar .title { font-weight: bold; }
+        .app-title-bar .fps-indicator { font-size: 0.9em; color: var(--text-secondary); background-color: var(--bg-secondary); padding: 2px 6px; border-radius: 4px;}
+
+        /* Верхняя область навигации (меню + тулбар) */
+        .top-navigation-area {
+            background-color: var(--bg-tertiary);
+            border-bottom: 1px solid var(--border-color);
+            box-shadow: var(--shadow-color) 0px 2px 4px -2px;
+            flex-shrink: 0;
+            padding: 0 5px; /* Небольшой отступ по бокам */
+        }
+        
+        /* Меню-бар */
+        .menu-bar {
+            display: flex;
+            padding: 0;
+            margin: 0;
+            list-style: none;
+            height: 30px; /* Фиксированная высота для пунктов меню */
+        }
+        .menu-bar > li {
+            position: relative;
+        }
+        .menu-bar > li > a, .menu-bar > li > span { /* Span для элементов без ссылки, если нужно */
+            display: block;
+            padding: 5px 10px;
+            color: var(--text-primary);
+            text-decoration: none;
+            cursor: pointer;
+            font-size: 0.9em;
+            line-height: 20px; /* Чтобы текст был по центру */
+        }
+        .menu-bar > li:hover > a, .menu-bar > li:hover > span {
+            background-color: var(--bg-hover);
+        }
+        .menu-bar > li.active-menu > a, .menu-bar > li.active-menu > span { /* Если меню активно (показан dropdown) */
+             background-color: var(--bg-hover);
+        }
+
+        /* Выпадающее меню */
+        .menu-bar ul.dropdown-menu {
+            display: none;
+            position: absolute;
+            left: 0;
+            top: 100%;
+            background-color: var(--dropdown-bg);
+            border: 1px solid var(--dropdown-border);
+            list-style: none;
+            padding: 5px 0;
+            margin: 0;
+            min-width: 200px;
+            z-index: 1000;
+            box-shadow: 0 4px 8px var(--dropdown-shadow);
+        }
+        .menu-bar > li:hover ul.dropdown-menu, 
+        .menu-bar > li.active-menu ul.dropdown-menu { /* Показываем по ховеру на родителя или если он active */
+            display: block;
+        }
+        .dropdown-menu li a {
+            display: block;
+            padding: 8px 15px;
+            color: var(--text-primary);
+            text-decoration: none;
+            font-size: 0.9em;
+            white-space: nowrap;
+        }
+        .dropdown-menu li a:hover {
+            background-color: var(--accent-primary);
+            color: white; /* Для светлой темы */
+        }
+        body.dark-theme .dropdown-menu li a:hover {
+            color: white; /* Явно для темной */
+        }
+        .dropdown-menu li.active a { /* Стиль для активного пункта */
+             background-color: var(--accent-primary);
+             color: white;
+             font-weight: bold;
+        }
+        .dropdown-menu .separator {
+            height: 1px;
+            background-color: var(--border-color);
+            margin: 5px 0;
+        }
+
+        /* Тулбар */
+        .tool-bar {
+            display: flex;
+            align-items: center;
+            padding: 5px;
+            gap: 5px;
+            /* border-top: 1px solid var(--border-color); /* Если нужно отделить от меню */
+        }
+        .tool-bar-button {
+            background-color: transparent;
+            border: 1px solid transparent; /* Граница появится при ховере */
+            color: var(--text-primary);
+            padding: 6px 10px;
+            border-radius: 4px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 6px; /* Расстояние между иконкой и текстом */
+            font-size: 0.9em;
+            transition: background-color 0.2s, border-color 0.2s;
+        }
+        .tool-bar-button .icon { font-size: 1.1em; }
+        .tool-bar-button:hover {
+            background-color: var(--bg-hover);
+            border-color: var(--border-color);
+        }
+        .tool-bar-button:active {
+            background-color: var(--accent-primary);
+            color: white;
+            border-color: var(--accent-primary-hover);
+        }
+         body.dark-theme .tool-bar-button:active {
+            color: white;
+        }
+
+        .tool-bar .separator {
+            width: 1px;
+            height: 20px;
+            background-color: var(--border-color);
+            margin: 0 5px;
+        }
+        
+
+        /* Основной макет (колонки) и секции контента - стили почти без изменений */
+        .main-layout { display: flex; flex-grow: 1; overflow: hidden; }
+        .content-area {
+            flex-grow: 1; padding: 15px; overflow-y: auto; background-color: var(--bg-secondary);
+            display: flex; gap: 15px;
+        }
+        .content-main-column { flex: 2; display: flex; flex-direction: column; gap: 15px; min-width: 350px; }
+        .content-side-column { flex: 1; display: flex; flex-direction: column; gap: 15px; min-width: 280px; }
+        .content-section {
+            background-color: var(--bg-primary); padding: 15px; border-radius: 6px;
+            box-shadow: 0 1px 2px var(--shadow-color); display: flex; flex-direction: column;
+        }
+        #data-section { flex-grow: 1; }
+        .content-section h2 {
+            margin-top: 0; color: var(--text-primary); border-bottom: 1px solid var(--border-color);
+            padding-bottom: 8px; margin-bottom: 12px; font-size: 1.1em;
+        }
+
+        /* Таблица, формы, схема, скроллбар - стили из предыдущего ответа в основном без изменений, могут быть мелкие коррекции */
+        .data-table-wrapper { flex-grow: 1; max-height: calc(100vh - 320px); overflow: auto; border: 1px solid var(--border-color); border-radius: 4px; }
+        table.data-table { width: 100%; border-collapse: collapse; }
+        table.data-table th, table.data-table td { padding: 8px 10px; text-align: left; border-bottom: 1px solid var(--border-color); font-size: 0.8em; }
+        table.data-table th { background-color: var(--bg-tertiary); color: var(--text-secondary); font-weight: 600; position: sticky; top: 0; z-index: 1; }
+        table.data-table tr:nth-child(even) { background-color: var(--table-row-alt-bg); }
+        table.data-table tr:hover { background-color: var(--bg-tertiary); }
+        .form-group { margin-bottom: 10px; }
+        .form-group label { display: block; margin-bottom: 3px; font-size: 0.8em; color: var(--text-secondary); }
+        .form-group input[type="text"], .form-group input[type="number"] { width: 100%; padding: 6px 8px; border: 1px solid var(--input-border); border-radius: 3px; background-color: var(--input-bg); color: var(--text-primary); box-sizing: border-box; font-size: 0.85em; }
+        .button-bar { margin-top: 12px; display: flex; gap: 8px; }
+        .button-bar button { padding: 7px 12px; border-radius: 4px; cursor: pointer; font-size: 0.85em; }
+        .button-bar .btn-primary { background-color: var(--accent-primary); color: white; border: 1px solid var(--accent-primary); }
+        .button-bar .btn-secondary { background-color: var(--accent-secondary); color: white; border: 1px solid var(--accent-secondary); }
+        .schema-placeholder { width: 100%; aspect-ratio: 16 / 10; max-height: 220px; background-color: var(--bg-tertiary); border: 1px dashed var(--border-color); border-radius: 6px; display: flex; justify-content: center; align-items: center; color: var(--text-muted); }
+        .schema-placeholder-text { font-size: 0.9em; }
+        ::-webkit-scrollbar { width: 7px; height: 7px; }
+        ::-webkit-scrollbar-track { background: var(--scrollbar-track); border-radius: 3px; }
+        ::-webkit-scrollbar-thumb { background: var(--scrollbar-thumb); border-radius: 3px; }
+        body.dark-theme ::-webkit-scrollbar-thumb:hover { background: #6a6a6a; }
+
+    </style>
+</head>
+<body class="dark-theme"> <!-- Начнем с темной темы -->
+
+    <div class="app-container">
+        <header class="app-title-bar">
+            <div class="title">Анализ данных</div>
+            <div class="fps-indicator">60 FPS</div>
+        </header>
+
+        <div class="top-navigation-area">
+            <ul class="menu-bar" id="mainMenuBar">
+                <li>
+                    <a href="#">Файл</a>
+                    <ul class="dropdown-menu">
+                        <li><a href="#" id="openFileAction">Открыть SQLite файл...</a></li>
+                        <li><div class="separator"></div></li>
+                        <li><a href="#">Сохранить (откл.)</a></li>
+                    </ul>
+                </li>
+                <li>
+                    <a href="#">Вид</a>
+                    <ul class="dropdown-menu" id="themeMenu">
+                        <li><a href="#" data-theme="dark">Темная тема</a></li>
+                        <li><a href="#" data-theme="light">Светлая тема</a></li>
+                    </ul>
+                </li>
+                <li>
+                    <a href="#">Уровни</a>
+                    <ul class="dropdown-menu" id="levelsMenu">
+                        <li><a href="#" data-level="1">Уровень 1</a></li>
+                        <li><a href="#" data-level="2">Уровень 2</a></li>
+                        <li><a href="#" data-level="3">Уровень 3</a></li>
+                        <li><a href="#" data-level="4">Уровень 4</a></li>
+                    </ul>
+                </li>
+                <li>
+                    <a href="#">Справка</a>
+                    <ul class="dropdown-menu">
+                        <li><a href="#">О программе (откл.)</a></li>
+                    </ul>
+                </li>
+            </ul>
+            <div class="tool-bar">
+                <button class="tool-bar-button" id="toolbarOpenFile">
+                    <span class="icon">📂</span> Открыть
+                </button>
+                <button class="tool-bar-button">
+                    <span class="icon">💾</span> Сохранить (откл.)
+                </button>
+                <div class="separator"></div>
+                <button class="tool-bar-button">
+                    <span class="icon">⚙️</span> Настройки (откл.)
+                </button>
+                 <button class="tool-bar-button">
+                    <span class="icon">❓</span> Помощь (откл.)
+                </button>
+            </div>
+        </div>
+
+        <div class="main-layout">
+            <main class="content-area">
+                 <div class="content-main-column">
+                    <section id="data-section" class="content-section">
+                        <h2>Данные (Уровень <span id="current-level-data">1</span>)</h2>
+                        <div class="data-table-wrapper">
+                            <table class="data-table">
+                                <thead><tr><th>Эпоха</th><th>0</th><th>1</th><th>2</th><th>3</th><th>4</th><th>5</th><th>6</th><th>7</th><th>8</th><th>9</th></tr></thead>
+                                <tbody id="dataTableBody"></tbody>
+                            </table>
+                        </div>
+                        <div class="button-bar"><button class="btn-secondary">Редактировать (откл.)</button><button class="btn-primary">Добавить (откл.)</button></div>
+                    </section>
+                </div>
+                <div class="content-side-column">
+                    <section id="values-section" class="content-section">
+                        <h2>Значения (Уровень <span id="current-level-values">1</span>)</h2>
+                        <div class="form-group"><label for="valueA">A</label><input type="number" id="valueA" value="0.9000" step="0.0001"></div>
+                        <div class="form-group"><label for="valueE">E</label><input type="number" id="valueE" value="0.0004" step="0.0001"></div>
+                        <div class="form-group"><label for="valueQuantity">Количество</label><input type="number" id="valueQuantity" value="3.0000" step="1"></div>
+                        <div class="button-bar"><button class="btn-primary">Редактировать (откл.)</button></div>
+                    </section>
+                    <section id="schema-section" class="content-section">
+                        <h2>Схема (Уровень <span id="current-level-schema">1</span>)</h2>
+                        <div class="schema-placeholder"><div id="schema-content" class="schema-placeholder-text">Схема для Уровня 1</div></div>
+                    </section>
+                </div>
+            </main>
+        </div>
+    </div>
+
+    <script>
+        // Моковые данные (такие же, как в прошлый раз)
+        const mockData = { /* ... ваш объект mockData ... */ 
+            1: { table: [ { epoch: 0, values: [35.81, 35.25, 35.40, 35.56, 35.72, 35.92, 35.04, 35.85, 35.78] },{ epoch: 1, values: [35.82, 35.26, 35.41, 35.57, 35.73, 35.93, 35.05, 35.86, 35.79] } ], values: { a: 0.9000, e: 0.0004, quantity: 3.0000 }, schemaText: "Схема Уровня 1 (демо)" }, 2: { table: [ { epoch: 0, values: [36.12, 35.56, 35.78, 35.90, 36.12, 36.34, 35.56, 36.12, 36.01] } ], values: { a: 0.8500, e: 0.0005, quantity: 5.0000 }, schemaText: "Схема Уровня 2 (демо)" }, 3: { table: [], values: { a: 0.95, e: 0.0002, quantity: 2 }, schemaText: "Схема Уровня 3 (пусто)" }, 4: { table: [ { epoch: 0, values: [33.1, 33.2, 33.3, 33.4, 33.5, 33.6, 33.7, 33.8, 33.9] } ], values: { a: 1.0, e: 0.0001, quantity: 1 }, schemaText: "Схема Уровня 4 (финал)" }
+        };
+
+        document.addEventListener('DOMContentLoaded', () => {
+            const body = document.body;
+            const themeMenu = document.getElementById('themeMenu');
+            const levelsMenu = document.getElementById('levelsMenu');
+            const mainMenuBar = document.getElementById('mainMenuBar');
+
+            const dataTableBody = document.getElementById('dataTableBody');
+            const valueAInput = document.getElementById('valueA');
+            const valueEInput = document.getElementById('valueE');
+            const valueQuantityInput = document.getElementById('valueQuantity');
+            const schemaContentDiv = document.getElementById('schema-content');
+            const currentLevelSpans = {
+                data: document.getElementById('current-level-data'),
+                values: document.getElementById('current-level-values'),
+                schema: document.getElementById('current-level-schema')
+            };
+
+            // --- Управление темой ---
+            function applyTheme(theme) {
+                if (theme === 'light') {
+                    body.classList.remove('dark-theme');
+                } else {
+                    body.classList.add('dark-theme');
+                }
+                localStorage.setItem('theme', theme);
+                updateMenuActiveState(themeMenu, `[data-theme="${theme}"]`);
+            }
+
+            themeMenu.addEventListener('click', (event) => {
+                event.preventDefault();
+                const target = event.target.closest('a[data-theme]');
+                if (target) {
+                    applyTheme(target.dataset.theme);
+                }
+            });
+            const savedTheme = localStorage.getItem('theme') || 'dark'; // По умолчанию темная
+            applyTheme(savedTheme);
+
+            // --- Управление уровнями ---
+            function updateContentForLevel(level) {
+                const dataForLevel = mockData[level];
+                if (!dataForLevel) {
+                    console.error(`Нет данных для уровня ${level}`);
+                    // Очистка, если данных нет
+                    dataTableBody.innerHTML = '<tr><td colspan="10">Нет данных.</td></tr>';
+                    valueAInput.value = ''; valueEInput.value = ''; valueQuantityInput.value = '';
+                    schemaContentDiv.textContent = 'Нет схемы.';
+                    Object.values(currentLevelSpans).forEach(span => span.textContent = level);
+                    return;
+                }
+                // Обновление таблицы
+                dataTableBody.innerHTML = '';
+                if (dataForLevel.table.length > 0) {
+                    dataForLevel.table.forEach(rowData => {
+                        const tr = document.createElement('tr');
+                        tr.innerHTML = `<td>${rowData.epoch}</td>` + rowData.values.map(v => `<td>${v}</td>`).join('');
+                        dataTableBody.appendChild(tr);
+                    });
+                } else {
+                     dataTableBody.innerHTML = '<tr><td colspan="10">Данные отсутствуют.</td></tr>';
+                }
+                // Обновление значений и схемы
+                valueAInput.value = dataForLevel.values.a;
+                valueEInput.value = dataForLevel.values.e;
+                valueQuantityInput.value = dataForLevel.values.quantity;
+                schemaContentDiv.textContent = dataForLevel.schemaText;
+                Object.values(currentLevelSpans).forEach(span => span.textContent = level);
+                localStorage.setItem('activeLevel', level);
+                updateMenuActiveState(levelsMenu, `[data-level="${level}"]`);
+                console.log(`Загружен уровень ${level}`);
+            }
+
+            levelsMenu.addEventListener('click', (event) => {
+                event.preventDefault();
+                const target = event.target.closest('a[data-level]');
+                if (target) {
+                    updateContentForLevel(target.dataset.level);
+                }
+            });
+            const savedLevel = localStorage.getItem('activeLevel') || '1';
+            updateContentForLevel(savedLevel);
+            
+            // --- Логика меню (простое открытие/закрытие по клику для touch-устройств) ---
+            // Прячем выпадающие меню, если клик был вне них
+            document.addEventListener('click', function(event) {
+                if (!mainMenuBar.contains(event.target)) {
+                    mainMenuBar.querySelectorAll('li.active-menu').forEach(li => li.classList.remove('active-menu'));
+                }
+            });
+
+            mainMenuBar.querySelectorAll('li > a').forEach(menuItem => {
+                // Проверяем, есть ли у него дочернее выпадающее меню
+                if (menuItem.nextElementSibling && menuItem.nextElementSibling.classList.contains('dropdown-menu')) {
+                    menuItem.addEventListener('click', function(event) {
+                        event.preventDefault(); // Отменяем переход по ссылке #
+                        event.stopPropagation(); // Останавливаем всплытие, чтобы не закрылось сразу же
+                        const parentLi = this.parentElement;
+                        const isActive = parentLi.classList.contains('active-menu');
+                        
+                        // Закрываем все другие открытые меню
+                        mainMenuBar.querySelectorAll('li.active-menu').forEach(li => {
+                            if (li !== parentLi) li.classList.remove('active-menu');
+                        });
+                        // Переключаем текущее
+                        parentLi.classList.toggle('active-menu', !isActive);
+                    });
+                }
+            });
+
+            // Вспомогательная функция для отметки активного пункта в меню
+            function updateMenuActiveState(menuContainer, activeSelector) {
+                menuContainer.querySelectorAll('li.active').forEach(li => li.classList.remove('active'));
+                const activeLink = menuContainer.querySelector(activeSelector);
+                if (activeLink) {
+                    activeLink.parentElement.classList.add('active');
+                }
+            }
+
+            // --- Кнопки на тулбаре ---
+            document.getElementById('openFileAction').addEventListener('click', (e) => { e.preventDefault(); alert('Действие: Открыть SQLite файл...'); });
+            document.getElementById('toolbarOpenFile').addEventListener('click', () => alert('Действие с тулбара: Открыть файл...'));
+
+        });
+    </script>
+</body>
+</html>

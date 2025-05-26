@@ -1,0 +1,263 @@
+/* Определяем переменные цветов для светлой (темы по умолчанию) */
+:root {
+    --bg-color: #ffffff;
+    --text-color: #000000;
+    --accent-color: #007bff; /* Синий */
+    --secondary-bg-color: #f4f4f4; /* Немного светлее для фона элементов */
+    --border-color: #dddddd; /* Цвет границ таблиц и т.д. */
+}
+
+/* Определения тем как CSS классов для body */
+body.theme-dark {
+    --bg-color: #1e1e1e;
+    --text-color: #f5f5f5;
+    --accent-color: #569cd6; /* Синий */
+    --secondary-bg-color: #2a2a2a;
+    --border-color: #555555;
+}
+
+body.theme-protanopia {
+    --bg-color: #fdf6e3; /* Бледный фон */
+    --text-color: #000000;
+    --accent-color: #3366cc; /* Синий/Фиолетовый вместо красного/зеленого акцента */
+    --secondary-bg-color: #eeeecc;
+    --border-color: #aaaaaa;
+}
+
+body.theme-deuteranopia {
+    --bg-color: #fdf6e3; /* Бледный фон */
+    --text-color: #000000;
+    --accent-color: #cc6600; /* Избегаем зеленого и красного, используем оранжевый/коричневый */
+     --secondary-bg-color: #eeeecc;
+     --border-color: #aaaaaa;
+}
+
+body.theme-tritanopia {
+    --bg-color: #fdf6e3; /* Бледный фон */
+    --text-color: #000000;
+    --accent-color: #ff6600; /* Замена синего/желтого на оранжевый */
+     --secondary-bg-color: #eeeecc;
+     --border-color: #aaaaaa;
+}
+
+body.theme-monochromacy {
+    --bg-color: #ffffff;
+    --text-color: #000000;
+    --accent-color: #888888; /* Только оттенки серого */
+     --secondary-bg-color: #e0e0e0;
+     --border-color: #a0a0a0;
+}
+
+
+/* Базовые стили для body и контейнера */
+body {
+    font-family: sans-serif;
+    margin: 0;
+    padding: 20px; /* Отступ по краям */
+    background-color: var(--bg-color);
+    color: var(--text-color);
+    transition: background-color 0.3s, color 0.3s; /* Плавный переход при смене темы */
+    min-height: 100vh;
+    box-sizing: border-box; /* Учитываем padding в общем размере */
+}
+
+.container {
+    width: 95%; /* Ширина контейнера */
+    max-width: 1400px; /* Максимальная ширина */
+    margin: 0 auto; /* Центрирование */
+    display: flex;
+    flex-direction: column; /* Элементы располагаются в столбец */
+    gap: 20px; /* Пространство между секциями */
+     min-height: calc(100vh - 40px); /* Учитываем padding body */
+}
+
+/* Стилизация header (верхние кнопки) */
+.header {
+    display: flex;
+    gap: 10px; /* Пространство между кнопками */
+    flex-wrap: wrap; /* Перенос кнопок на новую строку, если не помещаются */
+    align-items: center;
+    padding-bottom: 10px; /* Отступ снизу */
+     border-bottom: 1px solid var(--border-color);
+}
+
+.header button, .footer button, .theme-switcher button {
+    padding: 10px 15px;
+    border: none;
+    border-radius: 5px;
+    background-color: var(--accent-color);
+    color: white; /* Цвет текста на кнопке, можно тоже сделать переменной */
+    cursor: pointer;
+    font-size: 1rem;
+    transition: background-color 0.2s, opacity 0.2s;
+     flex-shrink: 0; /* Предотвращает сжимание кнопок */
+}
+
+.header button:hover, .footer button:hover, .theme-switcher button:hover {
+    opacity: 0.9;
+}
+
+/* Основная часть - main-content (таблица и правая панель) */
+.main-content {
+    display: flex; /* Располагаем left-panel и right-panel горизонтально */
+    gap: 20px; /* Пространство между левой и правой частями */
+    flex-grow: 1; /* Позволяет main-content занимать все доступное пространство */
+}
+
+/* Левая панель (Основная таблица) */
+.left-panel {
+    flex-basis: 65%; /* Основная таблица занимает 65% */
+    flex-grow: 1; /* Позволяет растягиваться */
+    display: flex;
+    flex-direction: column; /* Располагаем элементы внутри в столбец */
+    background-color: var(--secondary-bg-color);
+    padding: 15px;
+    border-radius: 5px;
+     box-shadow: 0 2px 5px rgba(0,0,0,0.05); /* Небольшая тень */
+     overflow: auto; /* Добавить скролл, если таблица не помещается */
+}
+
+.left-panel h2 {
+     margin-top: 0;
+     color: var(--text-color); /* Используем цвет текста из темы */
+}
+
+
+/* Правая панель (Маленькая таблица и Схема) */
+.right-panel {
+    flex-basis: 35%; /* Правая панель занимает 35% */
+    flex-grow: 1;
+    display: flex;
+    flex-direction: column; /* Располагаем элементы внутри в столбец */
+    gap: 20px; /* Пространство между маленькой таблицей и схемой */
+}
+
+/* Секция маленькой таблицы */
+.small-table-section {
+    background-color: var(--secondary-bg-color);
+    padding: 15px;
+    border-radius: 5px;
+     box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+     flex-shrink: 0; /* Предотвращает сжимание */
+}
+.small-table-section h2 {
+     margin-top: 0;
+     color: var(--text-color);
+}
+
+
+/* Секция схемы объекта */
+.schema-section {
+     background-color: var(--secondary-bg-color);
+    padding: 15px;
+    border-radius: 5px;
+     box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+     flex-grow: 1; /* Позволяет схеме занимать остаток пространства */
+     display: flex;
+     flex-direction: column;
+}
+.schema-section h2 {
+    margin-top: 0;
+    color: var(--text-color);
+}
+
+.schema-placeholder {
+    border: 2px dashed var(--border-color);
+    padding: 20px;
+    text-align: center;
+     flex-grow: 1; /* Растягивается */
+     display: flex; /* Для центрирования содержимого */
+     flex-direction: column;
+     justify-content: center;
+     align-items: center;
+     min-height: 150px; /* Минимальная высота placeholder'а */
+     color: var(--text-color);
+}
+
+.schema-placeholder img {
+    display: block; /* Удаляет лишнее пространство под изображением */
+     max-height: 100%; /* Ограничивает высоту изображения внутри placeholder'а */
+}
+
+
+/* Стилизация таблиц */
+table {
+    width: 100%;
+    border-collapse: collapse; /* Убираем двойные границы */
+    margin-top: 10px;
+    color: var(--text-color); /* Цвет текста в таблице */
+}
+
+th, td {
+    border: 1px solid var(--border-color);
+    padding: 10px;
+    text-align: left;
+}
+
+th {
+    background-color: color-mix(in srgb, var(--secondary-bg-color) 80%, var(--border-color) 20%); /* Немного темнее/светлее фона для заголовков */
+    font-weight: bold;
+}
+
+/* Стиль для каждой второй строки (зебра) */
+tbody tr:nth-child(even) {
+    background-color: color-mix(in srgb, var(--secondary-bg-color) 90%, var(--border-color) 10%);
+}
+
+/* Стиль при наведении на строку */
+tbody tr:hover {
+     background-color: color-mix(in srgb, var(--secondary-bg-color) 70%, var(--accent-color) 30%); /* Немного акцентного цвета при наведении */
+}
+
+
+/* Футер (нижняя кнопка) */
+.footer {
+    text-align: center; /* Центрируем кнопку в футере */
+     padding-top: 10px;
+     border-top: 1px solid var(--border-color);
+}
+
+
+/* Блок переключения тем */
+.theme-switcher {
+    margin-top: 20px;
+    padding: 15px;
+    border: 1px solid var(--border-color);
+    border-radius: 5px;
+     background-color: var(--secondary-bg-color);
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    align-items: center;
+}
+
+.theme-switcher h3 {
+    margin: 0 10px 0 0;
+    font-size: 1em;
+     color: var(--text-color);
+}
+
+/* Медиа-запрос для адаптивности: на узких экранах стекируем блоки */
+@media (max-width: 768px) {
+    .main-content {
+        flex-direction: column; /* В стелбец на маленьких экранах */
+    }
+
+    .left-panel, .right-panel {
+        flex-basis: auto; /* Отключаем фиксированные основы */
+        flex-grow: 1; /* Растягиваем оба блока */
+        width: 100%; /* Занимаем всю ширину */
+    }
+
+     .header {
+          justify-content: center; /* Центрируем кнопки заголовка */
+     }
+
+     .footer button {
+          width: 100%; /* Кнопка в футере на всю ширину */
+     }
+
+     .theme-switcher {
+          justify-content: center; /* Центрируем кнопки темы */
+     }
+}
