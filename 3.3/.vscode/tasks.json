@@ -1,0 +1,53 @@
+{
+    "version": "2.0.0",
+    "tasks": [
+        {
+            "label": "Build Raylib Project (GCC)", // Метка для GCC
+            "type": "shell",
+            "command": "C:/mingw64/bin/gcc.exe",   // Путь к твоему GCC из WinLibs
+            "args": [
+                "${workspaceFolder}/main_rl.c",
+                "${workspaceFolder}/sqlite3.c",
+                "${workspaceFolder}/calculations_rl.c",
+                "${workspaceFolder}/sqlite_utils_rl.c",
+                "${workspaceFolder}/tinyfiledialogs.c",
+                "${workspaceFolder}/level1_analysis_rl.c",
+                "${workspaceFolder}/level4_analysis_rl.c",
+                "${workspaceFolder}/color_themes.c"
+
+                // "${workspaceFolder}/minimal_test.c",
+
+                "-o",
+                "${workspaceFolder}/test.exe",     // Имя твоего выходного файла
+                "-I${workspaceFolder}",            // Для raygui.h и sqlite3.h в корне проекта
+                "-IC:/raylib/raylib/src",         // Путь к заголовкам Raylib
+                "-LC:/raylib/raylib/src",         // Путь к библиотеке Raylib
+                "-g",                             // Отладочная информация для GDB
+                "-lraylib",
+                "-lopengl32",
+                "-lgdi32",
+                "-lm"
+                "-lwinmm",
+                "-lcomdlg32", // <--- Для tinyfiledialogs на Windows
+                "-lole32",    // <--- Для tinyfiledialogs на Windows
+                "-DPLATFORM_DESKTOP",
+                "-DSQLITE_THREADSAFE=1"
+            ],
+            "group": {
+                "kind": "build",
+                "isDefault": true
+            },
+            "presentation": {
+                "echo": true,
+                "reveal": "always",
+                "focus": false,
+                "panel": "shared",
+                "showReuseMessage": true,
+                "clear": false
+            },
+            "problemMatcher": [
+                "$gcc" // Problem matcher для GCC
+            ]
+        }
+    ]
+}
