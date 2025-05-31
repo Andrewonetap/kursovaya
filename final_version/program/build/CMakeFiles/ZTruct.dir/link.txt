@@ -1,0 +1,3 @@
+C:\mingw64\bin\cmake.exe -E rm -f CMakeFiles\ZTruct.dir/objects.a
+C:\mingw64\bin\ar.exe qc CMakeFiles\ZTruct.dir/objects.a @CMakeFiles\ZTruct.dir\objects1.rsp
+C:\mingw64\bin\gcc.exe -O3 -DNDEBUG  -static -static-libgcc -static-libstdc++ -mwindows -Wl,--whole-archive CMakeFiles\ZTruct.dir/objects.a -Wl,--no-whole-archive -o ZTruct.exe -Wl,--out-implib,libZTruct.dll.a -Wl,--major-image-version,0,--minor-image-version,0 @CMakeFiles\ZTruct.dir\linkLibs.rsp

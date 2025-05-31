@@ -1,0 +1,26 @@
+{
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "name": "(gdb) Launch Raylib Project (GCC)", // Метка для GDB с GCC
+            "type": "cppdbg",
+            "request": "launch",
+            "program": "${workspaceFolder}/test.exe", // Имя твоего исполняемого файла
+            "args": [],
+            "stopAtEntry": false,
+            "cwd": "${workspaceFolder}",
+            "environment": [],
+            "externalConsole": false,
+            "MIMode": "gdb",
+            "miDebuggerPath": "C:/mingw64/bin/gdb.exe", // Путь к твоему GDB из WinLibs
+            "setupCommands": [
+                {
+                    "description": "Enable pretty-printing for gdb",
+                    "text": "-enable-pretty-printing",
+                    "ignoreFailures": true
+                }
+            ],
+            "preLaunchTask": "Build Raylib Project (GCC)" // Имя задачи сборки из tasks.json
+        }
+    ]
+}
